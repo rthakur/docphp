@@ -15,6 +15,5 @@
       "classmap": [
           "bin"
       ]
-    },
-    "minimum-stability": "stable"
+    }
 }
