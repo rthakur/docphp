@@ -30,7 +30,7 @@ class GenerateCommand extends Command
     private function createHtmlOutPut()
     {
 		$dir = str_replace('/bin', '', __DIR__);
-		$doc_json    = $dir.'/doc_json';
+		$doc_json    = $dir.'/doc_md';
 		$dirArray = scandir($doc_json);
 		$tempate = '/templates/default.rt';
 		
@@ -40,7 +40,7 @@ class GenerateCommand extends Command
 				
 				$pathinfo = pathinfo($file);
 				
-				if ( $pathinfo['extension'] == 'json' )
+				if ( $pathinfo['extension'] == 'md' )
 				{
 				 
 				  file_put_contents($dir.'/doc_output/'.$pathinfo['filename'].'.html', file_get_contents( $dir . $tempate ) );
