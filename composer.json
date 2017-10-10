@@ -1,0 +1,11 @@
+{
+    "require" :{
+        "symfony/console": "2.6.7"
+    },
+
+   "autoload": {
+	"classmap": [
+	    "bin"
+	]
+    }
+}
