@@ -25,32 +25,75 @@ class GenerateCommand extends Command
     {
 	      $output->writeln($this->createHtmlOutPut());
     }
-    
-    
+
+
     private function createHtmlOutPut()
     {
-		$dir = str_replace('/bin', '', __DIR__);
-		$doc_json    = $dir.'/doc_md';
-		$dirArray = scandir($doc_json);
-		$tempate = '/templates/default.rt';
-		
-		
-		foreach( $dirArray as  $file ) 
+
+    $dir = str_replace('/bin', '', __DIR__);
+
+		foreach( $this->scanDir() as  $file )
 			{
-				
+
 				$pathinfo = pathinfo($file);
-				
+
 				if ( $pathinfo['extension'] == 'md' )
 				{
-				 
-				  file_put_contents($dir.'/doc_output/'.$pathinfo['filename'].'.html', file_get_contents( $dir . $tempate ) );
-					
+
+				  file_put_contents($dir.'/doc_output/'.$pathinfo['filename'].'.html', $this->processMdFile($dir,  $file) );
+
 				}
-					
-				
+
 			}
-		
+
 		return "Successfully generated";
-		
+
 	}
+
+  private function scanDir()
+  {
+    $dir = str_replace('/bin', '', __DIR__);
+    $doc_json = $dir.'/doc_md';
+    return scandir($doc_json, 1);
+  }
+
+  private function createNav()
+  {
+
+    $nav = '';
+
+    foreach( $this->scanDir() as  $file )
+      {
+
+        $pathinfo = pathinfo($file);
+
+        if ( $pathinfo['extension'] == 'md' )
+
+            $nav .= '<li><a href="'.$pathinfo['filename'].'.html" class="toc-h1 toc-link">'.$pathinfo['filename'].'</a></li>';
+
+      }
+
+      return $nav;
+
+  }
+
+
+  private function processMdFile( $dir,  $file )
+  {
+		$tempate = '/templates/default.rt';
+    $template = file_get_contents( $dir . $tempate );
+
+    $mdFileContent = file_get_contents( $dir . '/doc_md/' . $file );
+
+    foreach( TagsGenerator::tagsDefinations() as $tag => $htmlTag )
+      $mdFileContent =   str_replace( $tag, $htmlTag, $mdFileContent);
+
+
+      $template = str_replace( '<-nav->', $this->createNav(), $template);
+
+      return str_replace( '<-content->', $mdFileContent, $template);
+
+  }
+
+
 }
