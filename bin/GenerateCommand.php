@@ -30,8 +30,10 @@ class GenerateCommand extends Command
     private function createHtmlOutPut()
     {
 
-    $dir = str_replace('/bin', '', __DIR__);
-
+		$dir = str_replace('/bin', '', __DIR__);
+		
+		$this->clearOutputFiles();
+		
 		foreach( $this->scanDir() as  $file )
 			{
 
@@ -80,7 +82,7 @@ class GenerateCommand extends Command
 
   private function processMdFile( $dir,  $file )
   {
-		$tempate = '/templates/default.rt';
+	$tempate = '/templates/default.rt';
     $template = file_get_contents( $dir . $tempate );
 
     $mdFileContent = file_get_contents( $dir . '/doc_md/' . $file );
@@ -93,6 +95,25 @@ class GenerateCommand extends Command
 
       return str_replace( '<-content->', $mdFileContent, $template);
 
+  }
+  
+  
+  
+  private function clearOutputFiles()
+  {
+    $dir = str_replace('/bin', '', __DIR__);
+    $doc_output = $dir.'/doc_output';
+	
+	foreach( scandir($doc_output, 1) as $file )
+	{
+		$pathinfo = pathinfo($file);
+	
+		if( $pathinfo['extension'] == 'html' )
+		{		
+			unlink( $dir.'/doc_output/'.$file );
+		}
+    }
+  
   }
 
 
